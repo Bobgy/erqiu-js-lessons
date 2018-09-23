@@ -226,13 +226,15 @@ class SortLessonContainer extends React.Component {
         }));
     };
 
+    // TODO: refactor to change immediateFn to key value argument
     delay = (fn, immediateFn = null) => {
         return (...args) => {
-            if (immediateFn) {
-                immediateFn(...args);
-            }
-
             return new Promise((resolve, reject) => {
+                setTimeout(() => {
+                    if (immediateFn) {
+                        immediateFn(...args);
+                    }
+                }, 0);
                 setTimeout(() => {
                     try {
                         resolve(fn(...args));
@@ -268,10 +270,6 @@ class SortLessonContainer extends React.Component {
     };
 
     swap = this.delay((i, j) => {
-        this.checkInterrupted();
-
-        this.checkIndexRangeOK(i, 'left of swap(left, right)');
-        this.checkIndexRangeOK(j, 'right of swap(left, right)');
         console.log(`swapping #${i} and #${j}`)
 
         this.setState(({array}) => {
@@ -285,15 +283,14 @@ class SortLessonContainer extends React.Component {
             };
         });
     }, (i, j) => {
+        this.checkInterrupted();
+        this.checkIndexRangeOK(i, 'left of swap(left, right)');
+        this.checkIndexRangeOK(j, 'right of swap(left, right)');
+
         this.setOnGoingAction.swapping(i, j);
     });
 
     lessThan = this.delay((i, j) => {
-        this.checkInterrupted();
-
-        this.checkIndexRangeOK(i, 'left of lessThan(left, right)');
-        this.checkIndexRangeOK(j, 'right of lessThan(left, right)');
-
         const leftValue = this.state.array[i].value;
         const rightValue = this.state.array[j].value;
         const result = leftValue < rightValue;
@@ -301,6 +298,10 @@ class SortLessonContainer extends React.Component {
 
         return result;
     }, (i, j) => {
+        this.checkInterrupted();
+        this.checkIndexRangeOK(i, 'left of lessThan(left, right)');
+        this.checkIndexRangeOK(j, 'right of lessThan(left, right)');
+
         this.setOnGoingAction.comparing(i, j);
     });
 
