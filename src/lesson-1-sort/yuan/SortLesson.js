@@ -229,19 +229,29 @@ class SortLessonContainer extends React.Component {
     // TODO: refactor to change immediateFn to key value argument
     delay = (fn, immediateFn = null) => {
         return (...args) => {
+            // TODO: refactor this to write it more elegantly
             return new Promise((resolve, reject) => {
                 setTimeout(() => {
-                    if (immediateFn) {
-                        immediateFn(...args);
-                    }
-                }, 0);
-                setTimeout(() => {
                     try {
-                        resolve(fn(...args));
+                        if (immediateFn) {
+                            resolve(immediateFn(...args));
+                        } else {
+                            resolve();
+                        }
                     } catch (err) {
                         reject(err);
                     }
-                }, this.state.delayMillis / 2);
+                }, 0);
+            }).then(() => {
+                return new Promise((resolve, reject) => {
+                    setTimeout(() => {
+                        try {
+                            resolve(fn(...args));
+                        } catch (err) {
+                            reject(err);
+                        }
+                    }, this.state.delayMillis / 2);
+                })
             }).then(result => {
                 return new Promise((resolve, reject) => {
                     setTimeout(
