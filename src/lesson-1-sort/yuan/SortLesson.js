@@ -80,7 +80,8 @@ const SortLesson = ({
      array, swap, lessThan,
      runAlgorithm, stopAlgorithm, pauseAlgorithm, resumeAlgorithm,
      algorithmToUse, toggleAlgorithmToUse,
-     status, error, shuffle,
+     status, error,
+     shuffle, reset,
      onGoingAction, actionParams,
      toggleAllowDuplicateNumber, allowDuplicateNumber,
 }) => {
@@ -127,8 +128,11 @@ const SortLesson = ({
                     onChange={toggleAllowDuplicateNumber}
                 />
             </CheckBoxLabel>
-            <CommonButton onClick={shuffle}>
+            <CommonButton onClick={shuffle} disabled={isAlgorithmActive}>
                 Randomize
+            </CommonButton>
+            <CommonButton onClick={reset} disabled={isAlgorithmActive}>
+                Reset
             </CommonButton>
         </div>
         <ErrorUI hasError={status==='error'} error={error}/>
@@ -188,6 +192,17 @@ function expandArray(array) {
             index: i,
         });
     }
+
+    return newArray;
+}
+
+function resetArray(array) {
+    const newArray = [];
+    console.log(array);
+    for (let i = 0; i < array.length; ++i) {
+        newArray[array[i].index - 1] = array[i];
+    }
+    console.log(newArray);
 
     return newArray;
 }
@@ -351,6 +366,13 @@ class SortLessonContainer extends React.Component {
         });
     };
 
+    reset = () => {
+        this.stopAlgorithm();
+        this.setState({
+            array: resetArray(this.state.array),
+        });
+    }
+
     runAlgorithm = (...args) => {
         const algorithmToUse = this.state.algorithmToUse === 'yuan' ? yuanBubbleSort : erqiuBubbleSort;
         this.setState({
@@ -417,6 +439,7 @@ class SortLessonContainer extends React.Component {
           status={this.state.status}
           error={this.state.caughtError}
           shuffle={this.shuffle}
+          reset={this.reset}
           onGoingAction={this.state.onGoingAction}
           actionParams={this.state.actionParams}
           toggleAllowDuplicateNumber={this.toggleAllowDuplicateNumber}
