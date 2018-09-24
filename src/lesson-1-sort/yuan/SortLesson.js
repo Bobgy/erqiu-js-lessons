@@ -78,12 +78,14 @@ const CheckBoxLabel = styled('label')({
 
 const SortLesson = ({
      array, swap, lessThan,
-     runAlgorithm, stopAlgorithm,
+     runAlgorithm, stopAlgorithm, pauseAlgorithm, resumeAlgorithm,
      algorithmToUse, toggleAlgorithmToUse,
      status, error, shuffle,
      onGoingAction, actionParams,
      toggleAllowDuplicateNumber, allowDuplicateNumber,
 }) => {
+    const isAlgorithmActive = status === 'running' || status === 'paused';
+
     return <div>
         <h4>Status: {status}</h4>
         <ArrayVisualization
@@ -92,16 +94,29 @@ const SortLesson = ({
             actionParams={actionParams}
         />
         <div>
-            { status !== 'running'
+            { !isAlgorithmActive
                 ? <StartButton onClick={() =>
                     runAlgorithm(array.length, lessThan, swap)}
                 >Start</StartButton>
                 : <CommonButton onClick={stopAlgorithm}>Stop</CommonButton>
             }
+            {(() => {
+                const isAlgorithmActive = status === 'running' || status === 'paused';
+
+                if (status === 'paused') {
+                    return <CommonButton
+                        onClick={resumeAlgorithm}
+                    >Resume</CommonButton>;
+                } else {
+                    return <CommonButton
+                        onClick={pauseAlgorithm}
+                        disabled={status !== 'running'}
+                    >Pause</CommonButton>;
+                }
+            })()}
             <ToggleAlgorithmButton onClick={toggleAlgorithmToUse}>
                 Using {algorithmToUse === 'yuan' ? "yuan's algorithm" : "erqiu's algorithm"}
             </ToggleAlgorithmButton>
-            <ErrorUI hasError={status==='error'} error={error}/>
         </div>
         <div>
             <CheckBoxLabel>
@@ -116,6 +131,7 @@ const SortLesson = ({
                 Randomize
             </CommonButton>
         </div>
+        <ErrorUI hasError={status==='error'} error={error}/>
     </div>;
 };
 
@@ -227,21 +243,33 @@ class SortLessonContainer extends React.Component {
     };
 
     // TODO: refactor to change immediateFn to key value argument
-    delay = (fn, immediateFn = null) => {
+    makeAsync = (fn, immediateFn = null) => {
         return (...args) => {
             // TODO: refactor this to write it more elegantly
             return new Promise((resolve, reject) => {
-                setTimeout(() => {
-                    try {
-                        if (immediateFn) {
-                            resolve(immediateFn(...args));
-                        } else {
-                            resolve();
-                        }
-                    } catch (err) {
-                        reject(err);
+                const doTheWork = () => {
+                    this.checkStatus();
+                    if (immediateFn) {
+                        resolve(immediateFn(...args));
+                    } else {
+                        resolve();
                     }
-                }, 0);
+                };
+
+                const tryOnce = (interval = 0) => {
+                    setTimeout(() => {
+                        try {
+                            doTheWork(resolve);
+                        } catch (err) {
+                            if (err === 'paused') {
+                                tryOnce(50);
+                            } else {
+                                reject(err);
+                            }
+                        }
+                    }, interval);
+                };
+                tryOnce();
             }).then(() => {
                 return new Promise((resolve, reject) => {
                     setTimeout(() => {
@@ -271,15 +299,17 @@ class SortLessonContainer extends React.Component {
         }
     }
 
-    checkInterrupted = () => {
+    checkStatus = () => {
         if (this.state.status !== 'running') {
-            const interruptError = new Error('interrupted');
-            interruptError.interrupted = true;
-            throw interruptError;
+            if (this.state.status === 'paused') {
+                throw 'paused';
+            } else {
+                throw 'interrupted';
+            }
         }
     };
 
-    swap = this.delay((i, j) => {
+    swap = this.makeAsync((i, j) => {
         console.log(`swapping #${i} and #${j}`)
 
         this.setState(({array}) => {
@@ -293,14 +323,13 @@ class SortLessonContainer extends React.Component {
             };
         });
     }, (i, j) => {
-        this.checkInterrupted();
         this.checkIndexRangeOK(i, 'left of swap(left, right)');
         this.checkIndexRangeOK(j, 'right of swap(left, right)');
 
         this.setOnGoingAction.swapping(i, j);
     });
 
-    lessThan = this.delay((i, j) => {
+    lessThan = this.makeAsync((i, j) => {
         const leftValue = this.state.array[i].value;
         const rightValue = this.state.array[j].value;
         const result = leftValue < rightValue;
@@ -308,7 +337,6 @@ class SortLessonContainer extends React.Component {
 
         return result;
     }, (i, j) => {
-        this.checkInterrupted();
         this.checkIndexRangeOK(i, 'left of lessThan(left, right)');
         this.checkIndexRangeOK(j, 'right of lessThan(left, right)');
 
@@ -336,7 +364,7 @@ class SortLessonContainer extends React.Component {
                 this.setOnGoingAction.clear();
             })
             .catch(err => {
-                if (err.interrupted) {
+                if (err === 'interrupted') {
                     console.log('stopped');
                 } else {
                     this.setOnGoingAction.clear();
@@ -355,18 +383,40 @@ class SortLessonContainer extends React.Component {
         });
     };
 
+    pauseAlgorithm = () => {
+        this.setState(({ status }) => {
+            if (status === 'running') {
+                return {
+                    status: 'paused',
+                };
+            };
+        });
+    };
+
+    resumeAlgorithm = () => {
+        this.setState(({ status }) => {
+            if (status === 'paused') {
+                return {
+                    status: 'running',
+                };
+            };
+        });
+    }
+
     render() {
         return <SortLesson
           array={this.state.array}
           swap={this.swap}
           lessThan={this.lessThan}
           runAlgorithm={this.runAlgorithm}
+          stopAlgorithm={this.stopAlgorithm}
+          pauseAlgorithm={this.pauseAlgorithm}
+          resumeAlgorithm={this.resumeAlgorithm}
           algorithmToUse={this.state.algorithmToUse}
           toggleAlgorithmToUse={this.toggleAlgorithmToUse}
           status={this.state.status}
           error={this.state.caughtError}
           shuffle={this.shuffle}
-          stopAlgorithm={this.stopAlgorithm}
           onGoingAction={this.state.onGoingAction}
           actionParams={this.state.actionParams}
           toggleAllowDuplicateNumber={this.toggleAllowDuplicateNumber}
