@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'react-emotion';
 import { SortLessonContainer } from './SortLessonContainer';
-import { ArrayVisualization } from './ArrayVisualization';
+import ArrayVisualization from './ArrayVisualization';
 
 const CommonButton = styled('button')({
     display: 'inline-block',

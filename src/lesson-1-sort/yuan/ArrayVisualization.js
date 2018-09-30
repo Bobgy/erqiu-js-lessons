@@ -1,5 +1,6 @@
+import React from 'react';
 import { ArrayItem } from "./ArrayItem";
-export const ArrayVisualization = ({ array, onGoingAction, actionParams }) => {
+const ArrayVisualization = ({ array, onGoingAction, actionParams }) => {
     const isComparing = onGoingAction === 'compare';
     const isSwapping = onGoingAction === 'swap';
     return <div>
@@ -12,3 +13,5 @@ export const ArrayVisualization = ({ array, onGoingAction, actionParams }) => {
         })}
     </div>;
 };
+
+export default ArrayVisualization;
