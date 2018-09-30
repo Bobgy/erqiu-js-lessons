@@ -58,6 +58,7 @@ const SortLesson = ({
             array={array}
             onGoingAction={onGoingAction}
             actionParams={actionParams}
+            isAlgoCompleted={status === 'complete'}
         />
         <div>
             {!isAlgorithmActive

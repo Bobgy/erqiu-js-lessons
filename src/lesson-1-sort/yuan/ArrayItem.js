@@ -1,13 +1,17 @@
 import styled from 'react-emotion';
-export const ArrayItem = styled('div')(({ beingSwapped, beingCompared }) => ({
+export const ArrayItem = styled('div')(({ beingSwapped, beingCompared, isAlgoCompleted }) => ({
+    minHeight: 40,
     minWidth: 40,
-    borderStyle: 'solid',
-    borderWidth: 1,
-    borderColor: 'black',
-    margin: '0px -1px 10px 0px',
+    boxSizing: 'border-box',
+    borderRadius: 20,
+    margin: '10px 2px',
     display: 'inline-block',
     padding: 10,
-    backgroundColor: beingSwapped
-        ? 'lightgreen'
-        : (beingCompared ? 'yellow' : null),
+    color: 'white',
+    backgroundColor: (() => {
+        if (isAlgoCompleted) return 'lightgreen';
+        else if (beingCompared) return 'pink';
+        else if (beingSwapped) return 'orangered';
+        else return '#CCC';
+    })(),
 }));
