@@ -60,7 +60,7 @@ export function resetArray(array) {
     const newArray = [];
     console.log(array);
     for (let i = 0; i < array.length; ++i) {
-        newArray[array[i].index - 1] = array[i];
+        newArray[array[i].index] = array[i];
     }
     console.log(newArray);
 
