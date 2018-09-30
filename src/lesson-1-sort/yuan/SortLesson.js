@@ -1,40 +1,7 @@
 import React from 'react';
 import styled from 'react-emotion';
 import { SortLessonContainer } from './SortLessonContainer';
-
-const ArrayItem = styled('div')(({ beingSwapped, beingCompared }) => ({
-    minWidth: 40,
-    borderStyle: 'solid',
-    borderWidth: 1,
-    borderColor: 'black',
-    margin: '0px -1px 10px 0px',
-    display: 'inline-block',
-    padding: 10,
-    backgroundColor: beingSwapped
-        ? 'lightgreen'
-        : (beingCompared ? 'yellow' : null),
-}));
-
-const ArrayVisualization = ({ array, onGoingAction, actionParams }) => {
-    const isComparing = onGoingAction === 'compare';
-    const isSwapping = onGoingAction === 'swap';
-
-    return <div>
-        {array.map((item, index) => {
-            const beingCompared = isComparing && actionParams.indexOf(item.index) >= 0;
-            const beingSwapped = isSwapping && actionParams.indexOf(item.index) >= 0;
-
-            return <ArrayItem
-                key={item.index}
-                isFirst={index === 0}
-                beingCompared={beingCompared}
-                beingSwapped={beingSwapped}
-            >
-                {item.value}
-            </ArrayItem>;
-        })}
-    </div>
-}
+import { ArrayVisualization } from './ArrayVisualization';
 
 const CommonButton = styled('button')({
     display: 'inline-block',
