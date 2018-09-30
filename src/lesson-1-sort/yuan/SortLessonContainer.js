@@ -4,6 +4,13 @@ import erqiuBubbleSort from '../erqiu/bubbleSort';
 import { expandArray, randomArray, resetArray } from './utils';
 import yuanBubbleSort from './sampleAlgorithm';
 
+const delayOptions = {
+    slow: 2000,
+    normal: 1000,
+    fast: 100,
+    fastest: 0,
+};
+
 export class SortLessonContainer extends React.Component {
     static propTypes = {
         children: PropTypes.func.isRequired,
@@ -11,13 +18,27 @@ export class SortLessonContainer extends React.Component {
 
     state = {
         array: expandArray(randomArray(false)),
-        delayMillis: 1000,
+        chosenDelayOption: 'normal',
         algorithmToUse: 'erqiu',
         caughtError: null,
         status: 'initial',
         onGoingAction: null,
         actionParams: null,
         allowDuplicateNumber: true,
+    };
+
+    setDelayOption = (option) => {
+        if (delayOptions[option] == null) {
+            throw new Error(`delay option "${option}" not found`);
+        }
+
+        this.setState({
+            chosenDelayOption: option,
+        });
+    }
+
+    getDelayMillis = () => {
+        return delayOptions[this.state.chosenDelayOption];
     };
 
     setOnGoingAction = {
@@ -94,13 +115,13 @@ export class SortLessonContainer extends React.Component {
                         } catch (err) {
                             reject(err);
                         }
-                    }, this.state.delayMillis / 2);
+                    }, this.getDelayMillis() / 2);
                 })
             }).then(result => {
                 return new Promise((resolve, reject) => {
                     setTimeout(
                         () => resolve(result),
-                        this.state.delayMillis / 2
+                        this.getDelayMillis() / 2
                     );
                 });
             });
@@ -245,6 +266,8 @@ export class SortLessonContainer extends React.Component {
             actionParams: this.state.actionParams,
             toggleAllowDuplicateNumber: this.toggleAllowDuplicateNumber,
             allowDuplicateNumber: this.state.allowDuplicateNumber,
+            setDelayOption: this.setDelayOption,
+            chosenDelayOption: this.state.chosenDelayOption,
         });
     }
 }

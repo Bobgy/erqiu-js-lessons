@@ -62,6 +62,17 @@ const CheckBoxLabel = styled('label')({
     fontSize: 11,
 });
 
+const DelayOptionSelect = ({ setDelayOption, chosenDelayOption }) => {
+    return <select value={chosenDelayOption} onChange={(event) => {
+        setDelayOption(event.target.value);
+    }}>
+        <option value="slow">slow</option>
+        <option value="normal">normal</option>
+        <option value="fast">fast</option>
+        <option value="fastest">fastest</option>
+    </select>;
+};
+
 const SortLesson = ({
      array, swap, lessThan,
      runAlgorithm, stopAlgorithm, pauseAlgorithm, resumeAlgorithm,
@@ -70,6 +81,7 @@ const SortLesson = ({
      shuffle, reset,
      onGoingAction, actionParams,
      toggleAllowDuplicateNumber, allowDuplicateNumber,
+     setDelayOption, chosenDelayOption,
 }) => {
     const isAlgorithmActive = status === 'running' || status === 'paused';
 
@@ -81,7 +93,7 @@ const SortLesson = ({
             actionParams={actionParams}
         />
         <div>
-            { !isAlgorithmActive
+            {!isAlgorithmActive
                 ? <StartButton onClick={() =>
                     runAlgorithm(array.length, lessThan, swap)}
                 >Start</StartButton>
@@ -102,6 +114,7 @@ const SortLesson = ({
             <ToggleAlgorithmButton onClick={toggleAlgorithmToUse}>
                 Using {algorithmToUse === 'yuan' ? "yuan's algorithm" : "erqiu's algorithm"}
             </ToggleAlgorithmButton>
+            <DelayOptionSelect chosenDelayOption={chosenDelayOption} setDelayOption={setDelayOption}/>
         </div>
         <div>
             <CheckBoxLabel>
