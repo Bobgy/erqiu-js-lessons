@@ -43,12 +43,13 @@ export function randomArray(allowDuplicateNumber = true) {
     }
 }
 
-export function expandArray(array) {
+export function expandArray(array, arrayID = 0) {
     const newArray = [];
     for (let i = 0; i < array.length; ++i) {
         newArray.push({
             value: array[i],
             index: i,
+            arrayID,
         });
     }
 

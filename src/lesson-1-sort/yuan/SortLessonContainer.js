@@ -18,6 +18,7 @@ export class SortLessonContainer extends React.Component {
 
     state = {
         array: expandArray(randomArray(false)),
+        arrayID: 0,
         chosenDelayOption: 'normal',
         algorithmToUse: 'erqiu',
         caughtError: null,
@@ -182,9 +183,11 @@ export class SortLessonContainer extends React.Component {
 
     shuffle = () => {
         this.stopAlgorithm();
+        const newArrayID = this.state.arrayID + 1;
         this.setState({
-            array: expandArray(randomArray(this.state.allowDuplicateNumber)),
+            array: expandArray(randomArray(this.state.allowDuplicateNumber), newArrayID),
             status: 'initial',
+            arrayID: newArrayID,
         });
     };
 
