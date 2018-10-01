@@ -52,7 +52,7 @@ const SortLesson = ({
 }) => {
     const isAlgorithmActive = status === 'running' || status === 'paused';
 
-    return <div>
+    return <div id={'lesson-1-sort-container'}>
         <h4>Status: {status}</h4>
         <ArrayVisualization
             array={array}

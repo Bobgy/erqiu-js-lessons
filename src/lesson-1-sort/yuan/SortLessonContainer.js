@@ -14,10 +14,15 @@ const delayOptions = {
 export class SortLessonContainer extends React.Component {
     static propTypes = {
         children: PropTypes.func.isRequired,
+        initialArray: PropTypes.array,
+    };
+
+    static defaultProps = {
+        initialArray: randomArray(false),
     };
 
     state = {
-        array: expandArray(randomArray(false)),
+        array: expandArray(this.props.initialArray),
         arrayID: 0,
         chosenDelayOption: 'normal',
         algorithmToUse: 'erqiu',

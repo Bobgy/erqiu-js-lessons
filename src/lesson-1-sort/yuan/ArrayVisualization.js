@@ -12,7 +12,13 @@ const ArrayVisualization = ({ array, onGoingAction, actionParams, isAlgoComplete
                 const beingSwapped = isSwapping && actionParams.indexOf(item.index) >= 0;
 
                 return <Flipped key={item.index} flipId={`array-${item.arrayID}-item-${item.index}`}>
-                    <ArrayItem isFirst={index === 0} beingCompared={beingCompared} beingSwapped={beingSwapped} isAlgoCompleted={isAlgoCompleted}>
+                    <ArrayItem
+                        className="array-item-number"
+                        isFirst={index === 0}
+                        beingCompared={beingCompared}
+                        beingSwapped={beingSwapped}
+                        isAlgoCompleted={isAlgoCompleted}
+                    >
                         {item.value}
                     </ArrayItem>
                 </Flipped>;
