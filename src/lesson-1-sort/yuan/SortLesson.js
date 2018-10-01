@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import styled from 'react-emotion';
 import { SortLessonContainer } from './SortLessonContainer';
 import ArrayVisualization from './ArrayVisualization';
@@ -25,19 +25,24 @@ const ErrorUI = ({ hasError, error }) => {
     return <div><h3>Error Message: {error.message}</h3><WrappedPre>{error.stack}</WrappedPre></div>;
 }
 
-const CheckBoxLabel = styled('label')({
+const CommonLabel = styled('label')({
     fontSize: 11,
 });
 
 const DelayOptionSelect = ({ setDelayOption, chosenDelayOption }) => {
-    return <select value={chosenDelayOption} onChange={(event) => {
-        setDelayOption(event.target.value);
-    }}>
-        <option value="slow">slow</option>
-        <option value="normal">normal</option>
-        <option value="fast">fast</option>
-        <option value="fastest">fastest</option>
-    </select>;
+    return <CommonLabel>{'Speed: '}
+        <select
+            value={chosenDelayOption}
+            onChange={(event) => {
+                setDelayOption(event.target.value);
+            }}
+        >
+            <option value="slow">slow</option>
+            <option value="normal">normal</option>
+            <option value="fast">fast</option>
+            <option value="fastest">fastest</option>
+        </select>
+    </CommonLabel>;
 };
 
 const SortLesson = ({
@@ -85,14 +90,14 @@ const SortLesson = ({
             <DelayOptionSelect chosenDelayOption={chosenDelayOption} setDelayOption={setDelayOption}/>
         </div>
         <div>
-            <CheckBoxLabel>
+            <CommonLabel>
                 Allow Duplicate Number
                 <input
                     type="checkbox"
                     checked={allowDuplicateNumber}
                     onChange={toggleAllowDuplicateNumber}
                 />
-            </CheckBoxLabel>
+            </CommonLabel>
             <CommonButton onClick={shuffle} disabled={isAlgorithmActive}>
                 Randomize
             </CommonButton>
