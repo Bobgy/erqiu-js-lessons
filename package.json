@@ -5,6 +5,7 @@
   "dependencies": {
     "cypress": "^3.1.0",
     "emotion": "^9.2.10",
+    "npm": "^6.4.1",
     "react": "^16.5.2",
     "react-dom": "^16.5.2",
     "react-emotion": "^9.2.10",
@@ -14,8 +15,10 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "test": "react-scripts test && npm run cytest",
+    "eject": "react-scripts eject",
+    "cyopen": "cypress open",
+    "cytest": "cypress run -s cypress/integration/erqiu-js-lessons/*"
   },
   "browserslist": [
     ">0.2%",
