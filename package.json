@@ -15,7 +15,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test && npm run cytest",
+    "test": "react-scripts test",
     "eject": "react-scripts eject",
     "cyopen": "cypress open",
     "cytest": "cypress run -s cypress/integration/erqiu-js-lessons/*"
