@@ -8,6 +8,7 @@ export const ArrayItem = styled('div')(({ beingSwapped, beingCompared, isAlgoCom
     display: 'inline-block',
     padding: 10,
     color: 'white',
+    lineHeight: '20px', // HACK: checked internal container is 20px height, so set line height to 20px to center vertically
     backgroundColor: (() => {
         if (isAlgoCompleted) return 'lightgreen';
         else if (beingCompared) return 'pink';
