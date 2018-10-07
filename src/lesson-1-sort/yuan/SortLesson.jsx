@@ -63,6 +63,7 @@ const SortLesson = ({
   stopAlgorithm,
   pauseAlgorithm,
   resumeAlgorithm,
+  nextStepAlgorithm,
   algorithmToUse,
   toggleAlgorithmToUse,
   status,
@@ -95,7 +96,12 @@ const SortLesson = ({
         )}
         {(() => {
           if (status === 'paused') {
-            return <CommonButton onClick={resumeAlgorithm}>Resume</CommonButton>
+            return (
+              <div>
+                <CommonButton onClick={resumeAlgorithm}>Resume</CommonButton>
+                <CommonButton onClick={nextStepAlgorithm}>Next</CommonButton>
+              </div>
+            )
           } else {
             return (
               <CommonButton onClick={pauseAlgorithm} disabled={status !== 'running'}>

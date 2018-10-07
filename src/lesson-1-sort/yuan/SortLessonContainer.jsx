@@ -79,13 +79,18 @@ export class SortLessonContainer extends React.Component {
     }))
   }
 
+  pausedAction = null
+  retryTimeoutHandle = null
+
   // TODO: refactor to change immediateFn to key value argument
   makeAsync = (fn, immediateFn = null) => {
     return (...args) => {
       // TODO: refactor this to write it more elegantly
       return new Promise((resolve, reject) => {
-        const doTheWork = () => {
-          this.checkStatus()
+        const doTheWork = ({ skip } = { skip: false }) => {
+          if (!skip) {
+            this.checkStatus()
+          }
           if (immediateFn) {
             resolve(immediateFn(...args))
           } else {
@@ -94,11 +99,18 @@ export class SortLessonContainer extends React.Component {
         }
 
         const tryOnce = (interval = 0) => {
-          setTimeout(() => {
+          this.retryTimeoutHandle = setTimeout(() => {
             try {
+              this.pausedAction = null
               doTheWork(resolve)
             } catch (err) {
               if (err === 'paused') {
+                this.pausedAction = {
+                  run: () => {
+                    clearTimeout(this.retryTimeoutHandle)
+                    doTheWork({ skip: true })
+                  },
+                }
                 tryOnce(50)
               } else {
                 reject(err)
@@ -256,6 +268,16 @@ export class SortLessonContainer extends React.Component {
     })
   }
 
+  // TODO: move other algorithm related actions to here
+  algorithmActions = {
+    nextStep: () => {
+      // only meaningful when paused
+      if (this.state.status === 'paused') {
+        this.pausedAction.run()
+      }
+    },
+  }
+
   render() {
     return this.props.children({
       array: this.state.array,
@@ -265,6 +287,7 @@ export class SortLessonContainer extends React.Component {
       stopAlgorithm: this.stopAlgorithm,
       pauseAlgorithm: this.pauseAlgorithm,
       resumeAlgorithm: this.resumeAlgorithm,
+      nextStepAlgorithm: this.algorithmActions.nextStep,
       algorithmToUse: this.state.algorithmToUse,
       toggleAlgorithmToUse: this.toggleAlgorithmToUse,
       status: this.state.status,
