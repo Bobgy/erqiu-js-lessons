@@ -1,7 +1,7 @@
-import React, { Fragment } from 'react'
+import React from 'react'
 import styled from 'react-emotion'
-import { SortLessonContainer } from './SortLessonContainer'
 import ArrayVisualization from './ArrayVisualization'
+import { SortLessonContainer } from './SortLessonContainer'
 
 const CommonButton = styled('button')({
   display: 'inline-block',
