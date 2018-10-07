@@ -1,13 +1,13 @@
 /// <reference types="Cypress" />
 
 const accum = (...cmds) => {
-  const results = []
+    const results = []
 
-  cmds.forEach((cmd) => {
-    cmd().then(results.push.bind(results))
-  })
+    cmds.forEach((cmd) => {
+        cmd().then(results.push.bind(results))
+    })
 
-  return cy.wrap(results)
+    return cy.wrap(results)
 }
 
 context('lesson-1-sort', () => {
