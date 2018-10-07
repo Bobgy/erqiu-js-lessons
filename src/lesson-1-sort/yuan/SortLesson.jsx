@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { Fragment } from 'react'
 import styled from 'react-emotion'
 import ArrayVisualization from './ArrayVisualization'
 import { SortLessonContainer } from './SortLessonContainer'
@@ -97,10 +97,10 @@ const SortLesson = ({
         {(() => {
           if (status === 'paused') {
             return (
-              <div>
+              <Fragment>
                 <CommonButton onClick={resumeAlgorithm}>Resume</CommonButton>
                 <CommonButton onClick={nextStepAlgorithm}>Next</CommonButton>
-              </div>
+              </Fragment>
             )
           } else {
             return (
