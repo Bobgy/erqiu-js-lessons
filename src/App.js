@@ -8,11 +8,21 @@ const LessonTitle = styled('h1')({
   textAlign: 'left',
 });
 
+const DivWithMaxWeight = styled('div')({
+  maxWidth: 600,
+});
+
+const RootFlexContainer = styled('div')({
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+});
+
 const Lesson = ({children, name}) => {
-  return <div>
+  return <RootFlexContainer>
     <LessonTitle>{name}</LessonTitle>
-    <div>{children}</div>
-  </div>;
+    <DivWithMaxWeight>{children}</DivWithMaxWeight>
+  </RootFlexContainer>;
 }
 
 class App extends Component {

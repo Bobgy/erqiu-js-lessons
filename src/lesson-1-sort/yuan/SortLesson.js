@@ -9,7 +9,9 @@ const CommonButton = styled('button')({
 });
 
 const StartButton = CommonButton;
-const ToggleAlgorithmButton = CommonButton;
+const ToggleAlgorithmButton = styled(CommonButton)({
+    width: 140, // NOTE, min-width doesn't work here
+});
 
 const WrappedPre = styled('pre')({
     whiteSpace: 'pre-wrap',
