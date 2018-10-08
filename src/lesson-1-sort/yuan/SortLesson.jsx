@@ -108,6 +108,11 @@ const SortLesson = ({
             )
           }
         })()}
+        <CommonButton onClick={reset} disabled={status === 'running' || status === 'initial'}>
+          Reset
+        </CommonButton>
+      </div>
+      <div>
         <ToggleAlgorithmButton onClick={toggleAlgorithmToUse} disabled={isAlgorithmActive}>
           Using {algorithmToUse === 'yuan' ? "yuan's algorithm" : "erqiu's algorithm"}
         </ToggleAlgorithmButton>
@@ -131,9 +136,6 @@ const SortLesson = ({
         </CommonLabel>
         <CommonButton onClick={shuffle} disabled={isAlgorithmActive}>
           Randomize
-        </CommonButton>
-        <CommonButton onClick={reset} disabled={status === 'running' || status === 'initial'}>
-          Reset
         </CommonButton>
       </div>
       <ErrorUI hasError={status === 'error'} error={error} />
