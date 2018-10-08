@@ -60,7 +60,6 @@ const SortLesson = ({
   swap,
   lessThan,
   runAlgorithm,
-  stopAlgorithm,
   pauseAlgorithm,
   resumeAlgorithm,
   nextStepAlgorithm,
@@ -89,19 +88,12 @@ const SortLesson = ({
         isAlgoCompleted={status === 'complete'}
       />
       <div>
-        {!isAlgorithmActive ? (
-          <StartButton onClick={() => runAlgorithm(array.length, lessThan, swap)}>Start</StartButton>
-        ) : (
-          <CommonButton onClick={stopAlgorithm}>Stop</CommonButton>
-        )}
+        <StartButton onClick={() => runAlgorithm(array.length, lessThan, swap)} disabled={isAlgorithmActive}>
+          Start
+        </StartButton>
         {(() => {
           if (status === 'paused') {
-            return (
-              <Fragment>
-                <CommonButton onClick={resumeAlgorithm}>Resume</CommonButton>
-                <CommonButton onClick={nextStepAlgorithm}>Next</CommonButton>
-              </Fragment>
-            )
+            return <CommonButton onClick={resumeAlgorithm}>Resume</CommonButton>
           } else {
             return (
               <CommonButton onClick={pauseAlgorithm} disabled={status !== 'running'}>
@@ -110,7 +102,10 @@ const SortLesson = ({
             )
           }
         })()}
-        <ToggleAlgorithmButton onClick={toggleAlgorithmToUse}>
+        <CommonButton onClick={nextStepAlgorithm} disabled={status !== 'paused'}>
+          Next
+        </CommonButton>
+        <ToggleAlgorithmButton onClick={toggleAlgorithmToUse} disabled={isAlgorithmActive}>
           Using {algorithmToUse === 'yuan' ? "yuan's algorithm" : "erqiu's algorithm"}
         </ToggleAlgorithmButton>
         <DelayOptionSelect chosenDelayOption={chosenDelayOption} setDelayOption={setDelayOption} />
@@ -123,7 +118,7 @@ const SortLesson = ({
         <CommonButton onClick={shuffle} disabled={isAlgorithmActive}>
           Randomize
         </CommonButton>
-        <CommonButton onClick={reset} disabled={isAlgorithmActive}>
+        <CommonButton onClick={reset} disabled={status === 'running' || status === 'initial'}>
           Reset
         </CommonButton>
       </div>

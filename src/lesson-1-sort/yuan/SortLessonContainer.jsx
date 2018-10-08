@@ -209,11 +209,14 @@ export class SortLessonContainer extends React.Component {
     })
   }
 
+  resetArrayImp = () => {
+    this.setState(state => ({
+      array: resetArray(state.array),
+    }))
+  }
+
   reset = () => {
     this.stopAlgorithm()
-    this.setState({
-      array: resetArray(this.state.array),
-    })
   }
 
   runAlgorithm = (...args) => {
@@ -243,6 +246,7 @@ export class SortLessonContainer extends React.Component {
 
   stopAlgorithm = () => {
     this.setOnGoingAction.clear()
+    this.resetArrayImp()
     this.setState({
       status: 'initial',
     })
@@ -284,7 +288,6 @@ export class SortLessonContainer extends React.Component {
       swap: this.swap,
       lessThan: this.lessThan,
       runAlgorithm: this.runAlgorithm,
-      stopAlgorithm: this.stopAlgorithm,
       pauseAlgorithm: this.pauseAlgorithm,
       resumeAlgorithm: this.resumeAlgorithm,
       nextStepAlgorithm: this.algorithmActions.nextStep,
