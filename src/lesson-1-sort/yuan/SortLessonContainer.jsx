@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import erqiuBubbleSort from '../erqiu/bubbleSort'
 import { expandArray, randomArray, resetArray } from './utils'
 import yuanBubbleSort from './sampleAlgorithm'
+import invariant from 'invariant'
 
 const delayOptions = {
   slow: 2000,
@@ -24,13 +25,16 @@ export class SortLessonContainer extends React.Component {
   state = {
     array: expandArray(this.props.initialArray),
     arrayID: 0,
-    chosenDelayOption: 'normal',
-    algorithmToUse: 'erqiu',
     caughtError: null,
     status: 'initial',
-    onGoingAction: null,
-    actionParams: null,
+    // action history
+    onGoingAction: {},
+    history: [],
+    historyIndex: null,
+    // config
     allowDuplicateNumber: true,
+    algorithmToUse: 'erqiu',
+    chosenDelayOption: 'normal',
   }
 
   setDelayOption = option => {
@@ -48,22 +52,30 @@ export class SortLessonContainer extends React.Component {
   }
 
   setOnGoingAction = {
+    _setAction: action => {
+      this.setState(state => ({
+        onGoingAction: action,
+        history: state.history.concat({ action, array: state.array }),
+        historyIndex: state.history.length,
+      }))
+    },
     clear: () => {
       this.setState({
-        onGoingAction: null,
-        actionParams: null,
+        onGoingAction: {},
+        history: [],
+        historyIndex: null,
       })
     },
     swapping: (i, j) => {
-      this.setState({
-        onGoingAction: 'swap',
-        actionParams: [this.state.array[i].index, this.state.array[j].index],
+      this.setOnGoingAction._setAction({
+        type: 'swap',
+        params: [this.state.array[i].index, this.state.array[j].index],
       })
     },
     comparing: (i, j) => {
-      this.setState({
-        onGoingAction: 'compare',
-        actionParams: [this.state.array[i].index, this.state.array[j].index],
+      this.setOnGoingAction._setAction({
+        type: 'compare',
+        params: [this.state.array[i].index, this.state.array[j].index],
       })
     },
   }
@@ -151,7 +163,7 @@ export class SortLessonContainer extends React.Component {
 
   checkStatus = () => {
     if (this.state.status !== 'running') {
-      if (this.state.status === 'paused') {
+      if (this.state.status === 'paused' || this.state.status === 'history') {
         throw 'paused'
       } else {
         throw 'interrupted'
@@ -263,21 +275,67 @@ export class SortLessonContainer extends React.Component {
   }
 
   resumeAlgorithm = () => {
-    this.setState(({ status }) => {
-      if (status === 'paused') {
+    if (this.state.status === 'history') {
+      this.setState(({ history }) => {
+        const lastHistoryItem = history[history.length - 1]
+
         return {
-          status: 'running',
+          status: 'paused',
+          array: lastHistoryItem.array,
+          onGoingAction: lastHistoryItem.action,
+          historyIndex: history.length - 1,
         }
-      }
-    })
+      })
+
+      setTimeout(() => this.setState({ status: 'running' }), 1000)
+    } else if (this.state.status === 'paused') {
+      this.setState({
+        status: 'running',
+      })
+    }
   }
 
   // TODO: move other algorithm related actions to here
   algorithmActions = {
     nextStep: () => {
-      // only meaningful when paused
       if (this.state.status === 'paused') {
+        // only meaningful when paused
         this.pausedAction.run()
+      } else if (this.state.status === 'history') {
+        invariant(this.state.historyIndex != null, "nextStep: history index shouldn't be null")
+        if (this.state.historyIndex === this.state.history.length - 1) {
+          // already reached latest history, try next step
+          this.setState(
+            {
+              status: 'paused',
+            },
+            () => this.pausedAction.run()
+          )
+        } else {
+          invariant(this.state.historyIndex != null, "nextStep: history index shouldn't be null")
+          // go to next step in history
+          this.setState(state => ({
+            historyIndex: state.historyIndex + 1,
+            onGoingAction: state.history[state.historyIndex + 1].action,
+            array: state.history[state.historyIndex + 1].array,
+            status: 'history',
+          }))
+        }
+      }
+    },
+    prevStep: () => {
+      if (this.state.status === 'paused' || this.state.status === 'history') {
+        this.setState(state => {
+          invariant(state.historyIndex != null, "prevStep: history index shouldn't be null")
+          const historyIndex = Math.max(0, state.historyIndex - 1)
+
+          return {
+            historyIndex,
+            onGoingAction: state.history[historyIndex].action,
+            array: state.history[historyIndex].array,
+            status: 'history',
+          }
+        })
       }
     },
   }
@@ -291,14 +349,16 @@ export class SortLessonContainer extends React.Component {
       pauseAlgorithm: this.pauseAlgorithm,
       resumeAlgorithm: this.resumeAlgorithm,
       nextStepAlgorithm: this.algorithmActions.nextStep,
+      prevStepAlgorithm: this.algorithmActions.prevStep,
+      hasPrevStep: this.state.historyIndex != null && this.state.historyIndex > 0,
       algorithmToUse: this.state.algorithmToUse,
       toggleAlgorithmToUse: this.toggleAlgorithmToUse,
       status: this.state.status,
       error: this.state.caughtError,
       shuffle: this.shuffle,
       reset: this.reset,
-      onGoingAction: this.state.onGoingAction,
-      actionParams: this.state.actionParams,
+      onGoingAction: this.state.onGoingAction.type,
+      actionParams: this.state.onGoingAction.params,
       toggleAllowDuplicateNumber: this.toggleAllowDuplicateNumber,
       allowDuplicateNumber: this.state.allowDuplicateNumber,
       setDelayOption: this.setDelayOption,

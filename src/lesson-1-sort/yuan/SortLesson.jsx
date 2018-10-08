@@ -63,6 +63,8 @@ const SortLesson = ({
   pauseAlgorithm,
   resumeAlgorithm,
   nextStepAlgorithm,
+  prevStepAlgorithm,
+  hasPrevStep,
   algorithmToUse,
   toggleAlgorithmToUse,
   status,
@@ -76,7 +78,8 @@ const SortLesson = ({
   setDelayOption,
   chosenDelayOption,
 }) => {
-  const isAlgorithmActive = status === 'running' || status === 'paused'
+  const isPaused = status === 'paused' || status === 'history'
+  const isAlgorithmActive = status === 'running' || status === 'paused' || status === 'history'
 
   return (
     <div id={'lesson-1-sort-container'}>
@@ -88,11 +91,14 @@ const SortLesson = ({
         isAlgoCompleted={status === 'complete'}
       />
       <div>
-        <StartButton onClick={() => runAlgorithm(array.length, lessThan, swap)} disabled={isAlgorithmActive}>
+        <StartButton
+          onClick={() => runAlgorithm(array.length, lessThan, swap)}
+          disabled={isAlgorithmActive || status === 'complete'}
+        >
           Start
         </StartButton>
         {(() => {
-          if (status === 'paused') {
+          if (isPaused) {
             return <CommonButton onClick={resumeAlgorithm}>Resume</CommonButton>
           } else {
             return (
@@ -102,13 +108,21 @@ const SortLesson = ({
             )
           }
         })()}
-        <CommonButton onClick={nextStepAlgorithm} disabled={status !== 'paused'}>
-          Next
-        </CommonButton>
         <ToggleAlgorithmButton onClick={toggleAlgorithmToUse} disabled={isAlgorithmActive}>
           Using {algorithmToUse === 'yuan' ? "yuan's algorithm" : "erqiu's algorithm"}
         </ToggleAlgorithmButton>
         <DelayOptionSelect chosenDelayOption={chosenDelayOption} setDelayOption={setDelayOption} />
+      </div>
+      <div>
+        <CommonButton
+          onClick={prevStepAlgorithm}
+          disabled={(status !== 'paused' && status !== 'history') || !hasPrevStep}
+        >
+          Prev
+        </CommonButton>
+        <CommonButton onClick={nextStepAlgorithm} disabled={!isPaused}>
+          Next
+        </CommonButton>
       </div>
       <div>
         <CommonLabel>
