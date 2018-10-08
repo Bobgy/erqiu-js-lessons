@@ -49,16 +49,18 @@ context('lesson-1-sort', () => {
 
     it('pause/resume works', () => {
         selectSpeed('fast')
+        findNextButton().should('have.attr', 'disabled')
         startAlgorithm()
         cy.wait(1000)
 
         accum(
             findArrayItemNumbers,
             () => cy.wait(1000).get('button').contains('Pause').click(),
+            () => findNextButton().should('not.have.attr', 'disabled'),
             () => waitAlgorithmStatus('paused'),
             () => cy.wait(1000),
             findArrayItemNumbers
-        ).then(([numbersBefore, _1, _2, _3, numbersAfter]) => {
+        ).then(([numbersBefore, _1, _2, _3, _4, numbersAfter]) => {
             expect(numbersBefore).to.not.deep.equal(numbersAfter)
         })
 
@@ -78,6 +80,10 @@ context('lesson-1-sort', () => {
         })
     })
 })
+
+function findNextButton() {
+    return cy.get('button').contains('Next');
+}
 
 function clickRandomizeButton() {
     return cy.get('button').contains('Randomize').click()
