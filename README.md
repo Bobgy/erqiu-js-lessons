@@ -2,6 +2,10 @@
 
 This is personal lesson for programming beginner Erqiu.
 
+## Demo
+
+check my demo on [codesandbox](https://codesandbox.io/s/vmr309jrv5), click the button "Using erqiu's algorithm" first to switch to an already implemented sort algorithm.
+
 ## Table of Contents
 
 - [Needed Things](#needed-things)
