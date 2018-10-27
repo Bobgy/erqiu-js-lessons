@@ -1,7 +1,8 @@
 import React from 'react'
 import styled from 'react-emotion'
-import ArrayVisualization from './ArrayVisualization'
+import ArrayVisualization, { OnGoingAction } from './ArrayVisualization'
 import { SortLessonContainer } from './SortLessonContainer'
+import { SwapAction, CompareAction } from './commonTypes';
 
 const CommonButton = styled('button')({
   display: 'inline-block',
@@ -58,8 +59,28 @@ const DelayOptionSelect = ({ setDelayOption, chosenDelayOption }: {
   )
 }
 
-interface AsyncBinaryAction {
-  (left: number, right: number): Promise<void>;
+interface SortLessonProps {
+  array: any[];
+  swap: SwapAction;
+  lessThan: CompareAction;
+  runAlgorithm: (length: number, lessThan: CompareAction, swap: SwapAction) => void;
+  pauseAlgorithm: () => void;
+  resumeAlgorithm: () => void;
+  nextStepAlgorithm: () => void;
+  prevStepAlgorithm: () => void;
+  hasPrevStep: boolean;
+  algorithmToUse: string;
+  toggleAlgorithmToUse: () => void;
+  status: string;
+  error: any;
+  shuffle: () => void;
+  reset: () => void;
+  onGoingAction: OnGoingAction;
+  actionParams: string[];
+  toggleAllowDuplicateNumber: () => void;
+  allowDuplicateNumber: boolean;
+  setDelayOption: (delayOption: string) => void;
+  chosenDelayOption: string;
 }
 
 const SortLesson = ({
@@ -84,29 +105,7 @@ const SortLesson = ({
   allowDuplicateNumber,
   setDelayOption,
   chosenDelayOption,
-}: {
-  array: any[];
-  swap: AsyncBinaryAction;
-  lessThan: AsyncBinaryAction;
-  runAlgorithm: (length: number, lessThan: AsyncBinaryAction, swap: AsyncBinaryAction) => void;
-  pauseAlgorithm: () => void;
-  resumeAlgorithm: () => void;
-  nextStepAlgorithm: () => void;
-  prevStepAlgorithm: () => void;
-  hasPrevStep: boolean;
-  algorithmToUse: string;
-  toggleAlgorithmToUse: () => void;
-  status: string;
-  error: any;
-  shuffle: () => void;
-  reset: () => void;
-  onGoingAction: string;
-  actionParams: string[];
-  toggleAllowDuplicateNumber: () => void;
-  allowDuplicateNumber: boolean;
-  setDelayOption: (delayOption: string) => void;
-  chosenDelayOption: string;
-}) => {
+}: SortLessonProps) => {
   const isPaused = status === 'paused' || status === 'history'
   const isAlgorithmActive = status === 'running' || status === 'paused' || status === 'history'
 
@@ -175,7 +174,7 @@ const SortLesson = ({
 export default () => {
   return (
     <div>
-      <SortLessonContainer>{(props: any) => <SortLesson {...props} />}</SortLessonContainer>
+      <SortLessonContainer>{(props: SortLessonProps) => <SortLesson {...props} />}</SortLessonContainer>
     </div>
   )
 }

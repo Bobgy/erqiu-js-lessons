@@ -2,13 +2,13 @@ import React from 'react'
 import { ArrayItem } from './ArrayItem'
 import { Flipped, Flipper } from 'react-flip-toolkit'
 
-interface ArrayItem {
+export interface ArrayItem {
   index: number,   // original index of this item
   value: number,   // value of this item
   arrayID: number, // ID of the whole array
 }
 
-type OnGoingAction = 'compare' | 'swap' | null
+export type OnGoingAction = 'compare' | 'swap' | null
 
 interface ArrayVisualizationProps {
   array: ArrayItem[],
