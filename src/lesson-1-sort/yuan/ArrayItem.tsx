@@ -1,5 +1,12 @@
 import styled from 'react-emotion'
-export const ArrayItem = styled('div')(({ beingSwapped, beingCompared, isAlgoCompleted }) => ({
+
+interface ArrayItemProps {
+  beingSwapped: boolean,
+  beingCompared: boolean,
+  isAlgoCompleted: boolean,
+}
+
+export const ArrayItem = styled('div')(({ beingSwapped, beingCompared, isAlgoCompleted }: ArrayItemProps) => ({
   minHeight: 40,
   minWidth: 40,
   boxSizing: 'border-box',
