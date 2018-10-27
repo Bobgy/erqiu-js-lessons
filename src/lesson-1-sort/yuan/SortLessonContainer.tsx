@@ -4,6 +4,8 @@ import erqiuBubbleSort from '../erqiu/bubbleSort'
 import { expandArray, randomArray, resetArray } from './utils'
 import yuanBubbleSort from './sampleAlgorithm'
 import invariant from 'invariant'
+import { ArrayItemData, OnGoingAction } from './ArrayVisualization'
+import { DelayOption, CompareAction, SwapAction } from './commonTypes'
 
 const delayOptions = {
   slow: 2000,
@@ -12,7 +14,44 @@ const delayOptions = {
   fastest: 0,
 }
 
-export class SortLessonContainer extends React.Component {
+interface SortLessonContainerProps {
+  children: any
+  initialArray: number[]
+}
+
+interface OnGoingActionData {
+  type?: OnGoingAction
+  params?: any[]
+}
+
+type Status = 'initial' | 'running' | 'complete' | 'paused' | 'history' | 'error'
+type Algorithm = 'yuan' | 'erqiu'
+type ArrayData = ArrayItemData[]
+
+interface HistoryItem {
+  action: OnGoingActionData
+  array: ArrayData
+}
+
+interface SortLessonContainerState {
+  array: ArrayItemData[]
+  arrayID: number
+  caughtError: any
+  status: Status
+
+  onGoingAction: OnGoingActionData
+  history: HistoryItem[]
+  historyIndex: number | null
+
+  allowDuplicateNumber: boolean
+  algorithmToUse: Algorithm
+  chosenDelayOption: DelayOption
+}
+
+export class SortLessonContainer extends React.Component<
+  SortLessonContainerProps,
+  SortLessonContainerState
+> {
   static propTypes = {
     children: PropTypes.func.isRequired,
     initialArray: PropTypes.array,
@@ -26,18 +65,21 @@ export class SortLessonContainer extends React.Component {
     array: expandArray(this.props.initialArray),
     arrayID: 0,
     caughtError: null,
-    status: 'initial',
+    status: 'initial' as Status,
     // action history
-    onGoingAction: {},
+    onGoingAction: {
+      type: undefined,
+      params: undefined,
+    },
     history: [],
     historyIndex: null,
     // config
     allowDuplicateNumber: true,
-    algorithmToUse: 'erqiu',
-    chosenDelayOption: 'normal',
+    algorithmToUse: 'erqiu' as Algorithm,
+    chosenDelayOption: 'normal' as DelayOption,
   }
 
-  setDelayOption = option => {
+  setDelayOption = (option: DelayOption) => {
     if (delayOptions[option] == null) {
       throw new Error(`delay option "${option}" not found`)
     }
@@ -52,7 +94,7 @@ export class SortLessonContainer extends React.Component {
   }
 
   setOnGoingAction = {
-    _setAction: action => {
+    _setAction: (action: OnGoingActionData) => {
       this.setState(state => ({
         onGoingAction: action,
         history: state.history.concat({ action, array: state.array }),
@@ -61,18 +103,21 @@ export class SortLessonContainer extends React.Component {
     },
     clear: () => {
       this.setState({
-        onGoingAction: {},
+        onGoingAction: {
+          type: undefined,
+          params: undefined,
+        },
         history: [],
         historyIndex: null,
       })
     },
-    swapping: (i, j) => {
+    swapping: (i: number, j: number) => {
       this.setOnGoingAction._setAction({
         type: 'swap',
         params: [this.state.array[i].index, this.state.array[j].index],
       })
     },
-    comparing: (i, j) => {
+    comparing: (i: number, j: number) => {
       this.setOnGoingAction._setAction({
         type: 'compare',
         params: [this.state.array[i].index, this.state.array[j].index],
@@ -82,7 +127,9 @@ export class SortLessonContainer extends React.Component {
 
   toggleAlgorithmToUse = () => {
     this.stopAlgorithm()
-    this.setState(({ algorithmToUse }) => ({ algorithmToUse: algorithmToUse === 'yuan' ? 'erqiu' : 'yuan' }))
+    this.setState(({ algorithmToUse }) => ({
+      algorithmToUse: algorithmToUse === 'yuan' ? 'erqiu' : 'yuan',
+    }))
   }
 
   toggleAllowDuplicateNumber = () => {
@@ -91,12 +138,15 @@ export class SortLessonContainer extends React.Component {
     }))
   }
 
-  pausedAction = null
-  retryTimeoutHandle = null
+  pausedAction: null | {
+    run: Function
+  } = null
+  retryTimeoutHandle?: number = undefined
 
   // TODO: refactor to change immediateFn to key value argument
-  makeAsync = (fn, immediateFn = null) => {
-    return (...args) => {
+  // TODO: fix types
+  makeAsync = (fn: any, immediateFn: any = null) => {
+    return (...args: any[]) => {
       // TODO: refactor this to write it more elegantly
       return new Promise((resolve, reject) => {
         const doTheWork = ({ skip } = { skip: false }) => {
@@ -111,15 +161,15 @@ export class SortLessonContainer extends React.Component {
         }
 
         const tryOnce = (interval = 0) => {
-          this.retryTimeoutHandle = setTimeout(() => {
+          this.retryTimeoutHandle = window.setTimeout(() => {
             try {
               this.pausedAction = null
-              doTheWork(resolve)
+              doTheWork()
             } catch (err) {
               if (err === 'paused') {
                 this.pausedAction = {
                   run: () => {
-                    clearTimeout(this.retryTimeoutHandle)
+                    window.clearTimeout(this.retryTimeoutHandle)
                     doTheWork({ skip: true })
                   },
                 }
@@ -151,12 +201,14 @@ export class SortLessonContainer extends React.Component {
     }
   }
 
-  checkIndexRangeOK = (index, name) => {
+  checkIndexRangeOK = (index: number, name: string) => {
     if (index >= 0 && index < this.state.array.length) {
       // ok
     } else {
       throw new Error(
-        `index ${name} is out of range, current value is ${index}, should be in range [0, ${this.state.array.length})`
+        `index ${name} is out of range, current value is ${index}, should be in range [0, ${
+          this.state.array.length
+        })`,
       )
     }
   }
@@ -172,7 +224,7 @@ export class SortLessonContainer extends React.Component {
   }
 
   swap = this.makeAsync(
-    (i, j) => {
+    (i: number, j: number) => {
       console.log(`swapping #${i} and #${j}`)
 
       this.setState(({ array }) => {
@@ -186,16 +238,16 @@ export class SortLessonContainer extends React.Component {
         }
       })
     },
-    (i, j) => {
+    (i: number, j: number) => {
       this.checkIndexRangeOK(i, 'left of swap(left, right)')
       this.checkIndexRangeOK(j, 'right of swap(left, right)')
 
       this.setOnGoingAction.swapping(i, j)
-    }
+    },
   )
 
   lessThan = this.makeAsync(
-    (i, j) => {
+    (i: number, j: number) => {
       const leftValue = this.state.array[i].value
       const rightValue = this.state.array[j].value
       const result = leftValue < rightValue
@@ -203,12 +255,12 @@ export class SortLessonContainer extends React.Component {
 
       return result
     },
-    (i, j) => {
+    (i: number, j: number) => {
       this.checkIndexRangeOK(i, 'left of lessThan(left, right)')
       this.checkIndexRangeOK(j, 'right of lessThan(left, right)')
 
       this.setOnGoingAction.comparing(i, j)
-    }
+    },
   )
 
   shuffle = () => {
@@ -231,12 +283,12 @@ export class SortLessonContainer extends React.Component {
     this.stopAlgorithm()
   }
 
-  runAlgorithm = (...args) => {
+  runAlgorithm = (length: number, lessThan: CompareAction, swap: SwapAction) => {
     const algorithmToUse = this.state.algorithmToUse === 'yuan' ? yuanBubbleSort : erqiuBubbleSort
     this.setState({
       status: 'running',
     })
-    algorithmToUse(...args)
+    algorithmToUse(length, lessThan, swap)
       .then(() => {
         this.setState({
           status: 'complete',
@@ -271,6 +323,8 @@ export class SortLessonContainer extends React.Component {
           status: 'paused',
         }
       }
+
+      return null
     })
   }
 
@@ -300,7 +354,7 @@ export class SortLessonContainer extends React.Component {
     nextStep: () => {
       if (this.state.status === 'paused') {
         // only meaningful when paused
-        this.pausedAction.run()
+        this.pausedAction!.run()
       } else if (this.state.status === 'history') {
         invariant(this.state.historyIndex != null, "nextStep: history index shouldn't be null")
         if (this.state.historyIndex === this.state.history.length - 1) {
@@ -309,15 +363,15 @@ export class SortLessonContainer extends React.Component {
             {
               status: 'paused',
             },
-            () => this.pausedAction.run()
+            () => this.pausedAction!.run(),
           )
         } else {
           invariant(this.state.historyIndex != null, "nextStep: history index shouldn't be null")
           // go to next step in history
           this.setState(state => ({
-            historyIndex: state.historyIndex + 1,
-            onGoingAction: state.history[state.historyIndex + 1].action,
-            array: state.history[state.historyIndex + 1].array,
+            historyIndex: state.historyIndex! + 1,
+            onGoingAction: state.history[state.historyIndex! + 1].action,
+            array: state.history[state.historyIndex! + 1].array,
             status: 'history',
           }))
         }
@@ -327,7 +381,7 @@ export class SortLessonContainer extends React.Component {
       if (this.state.status === 'paused' || this.state.status === 'history') {
         this.setState(state => {
           invariant(state.historyIndex != null, "prevStep: history index shouldn't be null")
-          const historyIndex = Math.max(0, state.historyIndex - 1)
+          const historyIndex = Math.max(0, state.historyIndex! - 1)
 
           return {
             historyIndex,
@@ -350,7 +404,7 @@ export class SortLessonContainer extends React.Component {
       resumeAlgorithm: this.resumeAlgorithm,
       nextStepAlgorithm: this.algorithmActions.nextStep,
       prevStepAlgorithm: this.algorithmActions.prevStep,
-      hasPrevStep: this.state.historyIndex != null && this.state.historyIndex > 0,
+      hasPrevStep: this.state.historyIndex != null && this.state.historyIndex! > 0,
       algorithmToUse: this.state.algorithmToUse,
       toggleAlgorithmToUse: this.toggleAlgorithmToUse,
       status: this.state.status,

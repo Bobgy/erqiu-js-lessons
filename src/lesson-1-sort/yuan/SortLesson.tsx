@@ -1,7 +1,8 @@
-import React, { Fragment } from 'react'
+import React from 'react'
 import styled from 'react-emotion'
-import ArrayVisualization from './ArrayVisualization'
+import ArrayVisualization, { OnGoingAction } from './ArrayVisualization'
 import { SortLessonContainer } from './SortLessonContainer'
+import { SwapAction, CompareAction } from './commonTypes';
 
 const CommonButton = styled('button')({
   display: 'inline-block',
@@ -19,7 +20,7 @@ const WrappedPre = styled('pre')({
   margin: 10,
 })
 
-const ErrorUI = ({ hasError, error }) => {
+const ErrorUI = ({ hasError, error }: { hasError: boolean; error: { message: string; stack: string } }) => {
   if (!hasError) {
     return null
   }
@@ -36,7 +37,10 @@ const CommonLabel = styled('label')({
   fontSize: 11,
 })
 
-const DelayOptionSelect = ({ setDelayOption, chosenDelayOption }) => {
+const DelayOptionSelect = ({ setDelayOption, chosenDelayOption }: {
+  setDelayOption: (delayOption: string) => void,
+  chosenDelayOption: string
+}) => {
   return (
     <CommonLabel>
       {'Speed: '}
@@ -53,6 +57,30 @@ const DelayOptionSelect = ({ setDelayOption, chosenDelayOption }) => {
       </select>
     </CommonLabel>
   )
+}
+
+interface SortLessonProps {
+  array: any[];
+  swap: SwapAction;
+  lessThan: CompareAction;
+  runAlgorithm: (length: number, lessThan: CompareAction, swap: SwapAction) => void;
+  pauseAlgorithm: () => void;
+  resumeAlgorithm: () => void;
+  nextStepAlgorithm: () => void;
+  prevStepAlgorithm: () => void;
+  hasPrevStep: boolean;
+  algorithmToUse: string;
+  toggleAlgorithmToUse: () => void;
+  status: string;
+  error: any;
+  shuffle: () => void;
+  reset: () => void;
+  onGoingAction: OnGoingAction;
+  actionParams: string[];
+  toggleAllowDuplicateNumber: () => void;
+  allowDuplicateNumber: boolean;
+  setDelayOption: (delayOption: string) => void;
+  chosenDelayOption: string;
 }
 
 const SortLesson = ({
@@ -77,7 +105,7 @@ const SortLesson = ({
   allowDuplicateNumber,
   setDelayOption,
   chosenDelayOption,
-}) => {
+}: SortLessonProps) => {
   const isPaused = status === 'paused' || status === 'history'
   const isAlgorithmActive = status === 'running' || status === 'paused' || status === 'history'
 
@@ -146,7 +174,7 @@ const SortLesson = ({
 export default () => {
   return (
     <div>
-      <SortLessonContainer>{props => <SortLesson {...props} />}</SortLessonContainer>
+      <SortLessonContainer>{(props: SortLessonProps) => <SortLesson {...props} />}</SortLessonContainer>
     </div>
   )
 }

@@ -2,14 +2,29 @@ import React from 'react'
 import { ArrayItem } from './ArrayItem'
 import { Flipped, Flipper } from 'react-flip-toolkit'
 
-const ArrayVisualization = ({ array, onGoingAction, actionParams, isAlgoCompleted }) => {
+export interface ArrayItemData {
+  index: number,   // original index of this item
+  value: number,   // value of this item
+  arrayID: number, // ID of the whole array
+}
+
+export type OnGoingAction = 'compare' | 'swap' | null
+
+interface ArrayVisualizationProps {
+  array: ArrayItemData[],
+  onGoingAction: OnGoingAction,
+  actionParams: any[],
+  isAlgoCompleted: boolean,
+}
+
+const ArrayVisualization = ({ array, onGoingAction, actionParams, isAlgoCompleted }: ArrayVisualizationProps) => {
   const isComparing = onGoingAction === 'compare'
   const isSwapping = onGoingAction === 'swap'
 
   return (
     <Flipper flipKey={array}>
       <div>
-        {array.map((item, index) => {
+        {array.map((item: ArrayItemData) => {
           const beingCompared = isComparing && actionParams.indexOf(item.index) >= 0
           const beingSwapped = isSwapping && actionParams.indexOf(item.index) >= 0
 
@@ -17,7 +32,6 @@ const ArrayVisualization = ({ array, onGoingAction, actionParams, isAlgoComplete
             <Flipped key={item.index} flipId={`array-${item.arrayID}-item-${item.index}`}>
               <ArrayItem
                 className="array-item-number"
-                isFirst={index === 0}
                 beingCompared={beingCompared}
                 beingSwapped={beingSwapped}
                 isAlgoCompleted={isAlgoCompleted}
