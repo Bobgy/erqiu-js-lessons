@@ -1,5 +1,7 @@
+import { ArrayItem } from './ArrayVisualization';
+
 // random integer in [l, r)
-export function randomInt(l, r) {
+export function randomInt(l: number, r: number) {
     const res = Math.floor(Math.random() * (r - l) + l);
     if (res >= r) {
         // fix possible float error
@@ -10,7 +12,7 @@ export function randomInt(l, r) {
 }
 
 export const randomArrayStrategies = {
-    allRandom: (length) => {
+    allRandom: (length: number) => {
         const newArray = [];
         for (let i = 0; i < length; ++i) {
             newArray.push(Math.ceil(Math.random() * 10));
@@ -18,8 +20,8 @@ export const randomArrayStrategies = {
 
         return newArray;
     },
-    permutation: (length) => {
-        const a = [];
+    permutation: (length: number) => {
+        const a: number[] = [];
         for (let i = 0; i < length; ++i) {
             a.push(i + 1);
         }
@@ -43,7 +45,7 @@ export function randomArray(allowDuplicateNumber = true) {
     }
 }
 
-export function expandArray(array, arrayID = 0) {
+export function expandArray(array: ArrayItem[], arrayID = 0) {
     const newArray = [];
     for (let i = 0; i < array.length; ++i) {
         newArray.push({
@@ -56,7 +58,7 @@ export function expandArray(array, arrayID = 0) {
     return newArray;
 }
 
-export function resetArray(array) {
+export function resetArray(array: ArrayItem[]) {
     const newArray = [];
     for (let i = 0; i < array.length; ++i) {
         newArray[array[i].index] = array[i];
