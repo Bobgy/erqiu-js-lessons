@@ -1,4 +1,4 @@
-import { ArrayItem } from './ArrayVisualization';
+import { ArrayItemData } from './ArrayVisualization';
 
 // random integer in [l, r)
 export function randomInt(l: number, r: number) {
@@ -45,8 +45,8 @@ export function randomArray(allowDuplicateNumber = true) {
     }
 }
 
-export function expandArray(array: ArrayItem[], arrayID = 0) {
-    const newArray = [];
+export function expandArray(array: number[], arrayID = 0) {
+    const newArray: ArrayItemData[] = [];
     for (let i = 0; i < array.length; ++i) {
         newArray.push({
             value: array[i],
@@ -58,7 +58,7 @@ export function expandArray(array: ArrayItem[], arrayID = 0) {
     return newArray;
 }
 
-export function resetArray(array: ArrayItem[]) {
+export function resetArray(array: ArrayItemData[]) {
     const newArray = [];
     for (let i = 0; i < array.length; ++i) {
         newArray[array[i].index] = array[i];

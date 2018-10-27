@@ -2,7 +2,7 @@ import React from 'react'
 import { ArrayItem } from './ArrayItem'
 import { Flipped, Flipper } from 'react-flip-toolkit'
 
-export interface ArrayItem {
+export interface ArrayItemData {
   index: number,   // original index of this item
   value: number,   // value of this item
   arrayID: number, // ID of the whole array
@@ -11,7 +11,7 @@ export interface ArrayItem {
 export type OnGoingAction = 'compare' | 'swap' | null
 
 interface ArrayVisualizationProps {
-  array: ArrayItem[],
+  array: ArrayItemData[],
   onGoingAction: OnGoingAction,
   actionParams: any[],
   isAlgoCompleted: boolean,
@@ -24,7 +24,7 @@ const ArrayVisualization = ({ array, onGoingAction, actionParams, isAlgoComplete
   return (
     <Flipper flipKey={array}>
       <div>
-        {array.map((item: ArrayItem) => {
+        {array.map((item: ArrayItemData) => {
           const beingCompared = isComparing && actionParams.indexOf(item.index) >= 0
           const beingSwapped = isSwapping && actionParams.indexOf(item.index) >= 0
 
