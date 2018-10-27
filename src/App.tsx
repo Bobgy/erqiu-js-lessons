@@ -18,7 +18,7 @@ const RootFlexContainer = styled('div')({
   alignItems: 'center',
 })
 
-const Lesson = ({ children, name }) => {
+const Lesson = ({ children, name }: { name: string; children: any }) => {
   return (
     <RootFlexContainer>
       <LessonTitle>{name}</LessonTitle>

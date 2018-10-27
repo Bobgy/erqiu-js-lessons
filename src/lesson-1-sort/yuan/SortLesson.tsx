@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react'
+import React from 'react'
 import styled from 'react-emotion'
 import ArrayVisualization from './ArrayVisualization'
 import { SortLessonContainer } from './SortLessonContainer'
@@ -19,7 +19,7 @@ const WrappedPre = styled('pre')({
   margin: 10,
 })
 
-const ErrorUI = ({ hasError, error }) => {
+const ErrorUI = ({ hasError, error }: { hasError: boolean; error: { message: string; stack: string } }) => {
   if (!hasError) {
     return null
   }
@@ -36,7 +36,10 @@ const CommonLabel = styled('label')({
   fontSize: 11,
 })
 
-const DelayOptionSelect = ({ setDelayOption, chosenDelayOption }) => {
+const DelayOptionSelect = ({ setDelayOption, chosenDelayOption }: {
+  setDelayOption: (delayOption: string) => void,
+  chosenDelayOption: string
+}) => {
   return (
     <CommonLabel>
       {'Speed: '}
@@ -53,6 +56,10 @@ const DelayOptionSelect = ({ setDelayOption, chosenDelayOption }) => {
       </select>
     </CommonLabel>
   )
+}
+
+interface AsyncBinaryAction {
+  (left: number, right: number): Promise<void>;
 }
 
 const SortLesson = ({
@@ -77,6 +84,28 @@ const SortLesson = ({
   allowDuplicateNumber,
   setDelayOption,
   chosenDelayOption,
+}: {
+  array: any[];
+  swap: AsyncBinaryAction;
+  lessThan: AsyncBinaryAction;
+  runAlgorithm: (length: number, lessThan: AsyncBinaryAction, swap: AsyncBinaryAction) => void;
+  pauseAlgorithm: () => void;
+  resumeAlgorithm: () => void;
+  nextStepAlgorithm: () => void;
+  prevStepAlgorithm: () => void;
+  hasPrevStep: boolean;
+  algorithmToUse: string;
+  toggleAlgorithmToUse: () => void;
+  status: string;
+  error: any;
+  shuffle: () => void;
+  reset: () => void;
+  onGoingAction: string;
+  actionParams: string[];
+  toggleAllowDuplicateNumber: () => void;
+  allowDuplicateNumber: boolean;
+  setDelayOption: (delayOption: string) => void;
+  chosenDelayOption: string;
 }) => {
   const isPaused = status === 'paused' || status === 'history'
   const isAlgorithmActive = status === 'running' || status === 'paused' || status === 'history'
@@ -146,7 +175,7 @@ const SortLesson = ({
 export default () => {
   return (
     <div>
-      <SortLessonContainer>{props => <SortLesson {...props} />}</SortLessonContainer>
+      <SortLessonContainer>{(props: any) => <SortLesson {...props} />}</SortLessonContainer>
     </div>
   )
 }
