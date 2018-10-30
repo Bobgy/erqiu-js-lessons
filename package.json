@@ -17,7 +17,8 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "cyopen": "cypress open",
-    "cytest": "cypress run -s cypress/integration/erqiu-js-lessons/*"
+    "cytest": "cypress run -s cypress/integration/erqiu-js-lessons/*",
+    "precommit": "CI=true npm run test"
   },
   "browserslist": [
     ">0.2%",
@@ -29,6 +30,7 @@
     "@types/invariant": "^2.2.29",
     "@types/react": "^16.4.18",
     "@types/react-dom": "^16.0.9",
+    "husky": "^1.1.2",
     "prettier": "1.14.3",
     "react-scripts": "^2.1.0",
     "typescript": "^3.1.3"
