@@ -9,7 +9,8 @@
     "invariant": "^2.2.4",
     "react": "^16.7.0-alpha.0",
     "react-dom": "^16.7.0-alpha.0",
-    "react-flip-toolkit": "^5.0.1"
+    "react-flip-toolkit": "^5.0.1",
+    "scheduler": "0.11.0-alpha.0"
   },
   "scripts": {
     "start": "react-scripts start",
