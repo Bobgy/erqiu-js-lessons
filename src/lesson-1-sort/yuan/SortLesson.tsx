@@ -1,5 +1,5 @@
 import React from 'react'
-import styled from 'react-emotion'
+import styled from '@emotion/styled'
 import ArrayVisualization, { OnGoingAction } from './ArrayVisualization'
 import { SortLessonContainer } from './SortLessonContainer'
 import { SwapAction, CompareAction } from './commonTypes';
