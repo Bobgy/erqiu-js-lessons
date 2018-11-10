@@ -1,7 +1,13 @@
 {
   "name": "erqiu-js-lessons",
+  "author": {
+    "name": "Bobgy",
+    "email": "gongyuan94@gmail.com",
+    "url": "https://github.com/Bobgy"
+  },
   "version": "0.1.0",
   "private": true,
+  "main": "src/index.jsx",
   "dependencies": {
     "@emotion/core": "^10.0.0-beta.8",
     "@emotion/styled": "^10.0.0-beta.8",
