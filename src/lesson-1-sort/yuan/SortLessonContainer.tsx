@@ -51,7 +51,7 @@ interface SortLessonContainerState {
 export class SortLessonContainer extends React.Component<
   SortLessonContainerProps,
   SortLessonContainerState
-> {
+  > {
   static propTypes = {
     children: PropTypes.func.isRequired,
     initialArray: PropTypes.array,
@@ -207,7 +207,7 @@ export class SortLessonContainer extends React.Component<
     } else {
       throw new Error(
         `index ${name} is out of range, current value is ${index}, should be in range [0, ${
-          this.state.array.length
+        this.state.array.length
         })`,
       )
     }
@@ -215,7 +215,7 @@ export class SortLessonContainer extends React.Component<
 
   checkStatus = () => {
     if (this.state.status !== 'running') {
-      if (this.state.status === 'paused' || this.state.status === 'history') {
+      if (['paused', 'history'].includes(this.state.status)) {
         throw 'paused'
       } else {
         throw 'interrupted'
@@ -287,25 +287,27 @@ export class SortLessonContainer extends React.Component<
     const algorithmToUse = this.state.algorithmToUse === 'yuan' ? yuanBubbleSort : erqiuBubbleSort
     this.setState({
       status: 'running',
-    })
-    algorithmToUse(length, lessThan, swap)
-      .then(() => {
-        this.setState({
-          status: 'complete',
-        })
-        this.setOnGoingAction.clear()
-      })
-      .catch(err => {
-        if (err === 'interrupted') {
-          console.log('stopped')
-        } else {
-          this.setOnGoingAction.clear()
+    }, () => {
+      // following code depends on status already changed to running
+      algorithmToUse(length, lessThan, swap)
+        .then(() => {
           this.setState({
-            caughtError: err,
-            status: 'error',
+            status: 'complete',
           })
-        }
-      })
+          this.setOnGoingAction.clear()
+        })
+        .catch(err => {
+          if (err === 'interrupted') {
+            console.log('stopped')
+          } else {
+            this.setOnGoingAction.clear()
+            this.setState({
+              caughtError: err,
+              status: 'error',
+            })
+          }
+        })
+    })
   }
 
   stopAlgorithm = () => {

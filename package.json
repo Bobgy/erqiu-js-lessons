@@ -9,14 +9,13 @@
   "private": true,
   "main": "src/index.jsx",
   "dependencies": {
-    "@emotion/core": "^10.0.0-beta.8",
-    "@emotion/styled": "^10.0.0-beta.8",
+    "@emotion/core": "^10.0.6",
+    "@emotion/styled": "^10.0.6",
     "cypress": "^3.1.0",
     "invariant": "^2.2.4",
-    "react": "^16.7.0-alpha.0",
-    "react-dom": "^16.7.0-alpha.0",
-    "react-flip-toolkit": "^5.0.1",
-    "scheduler": "0.11.0-alpha.0"
+    "react": "^16.8.0-alpha.1",
+    "react-dom": "^16.8.0-alpha.1",
+    "react-flip-toolkit": "^5.0.1"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -25,7 +24,7 @@
     "eject": "react-scripts eject",
     "cyopen": "cypress open",
     "cytest": "cypress run -s cypress/integration/erqiu-js-lessons/*",
-    "precommit": "CI=true npm run test"
+    "fixme-precommit": "CI=true npm run test"
   },
   "browserslist": [
     ">0.2%",
