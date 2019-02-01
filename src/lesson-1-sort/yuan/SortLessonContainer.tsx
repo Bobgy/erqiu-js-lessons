@@ -75,7 +75,7 @@ export class SortLessonContainer extends React.Component<
     historyIndex: null,
     // config
     allowDuplicateNumber: true,
-    algorithmToUse: 'erqiu' as Algorithm,
+    algorithmToUse: 'yuan' as Algorithm,
     chosenDelayOption: 'normal' as DelayOption,
   }
 
